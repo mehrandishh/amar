@@ -1,97 +1,1691 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>نمایش جدول فراوانی — داده‌های استخراج‌شده</title>
-<style>:root{ --bg:#f7f7fb; --card:#ffffff; --ink:#1f2937; --muted:#6b7280; --border:#e5e7eb; }
-html,body{height:100%}
-body{ margin:0; background:var(--bg); color:var(--ink); font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI","Vazirmatn",Tahoma,sans-serif; }
-.container{max-width:1100px; margin:24px auto 72px; padding:0 16px}
-.card{background:var(--card); border:1px solid var(--border); border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,.06); padding:16px}
-h1{font-size:22px; margin:0 0 12px}
-.chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:8px}
-.chip{background:#eef2ff; color:#1e3a8a; padding:6px 10px; border-radius:999px; font-size:12px; border:1px solid #dbeafe}
-table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:14px; margin-top:10px}
-thead th{background:#111827; color:#fff; text-align:center; padding:10px 8px}
-tbody td{background:#fff; text-align:center; padding:8px; border-bottom:1px solid var(--border)}
-tbody tr:nth-child(odd) td{ background:#fcfcff }
-.status{margin-top:8px; font-size:13px; color:var(--muted); display:flex; gap:16px; flex-wrap:wrap}
-.footer-note{margin-top:6px; font-size:12px; color:var(--muted)}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="سیستم جامع تحلیل آماری داده‌های ضریب هوشی با جدول فراوانی و نمودارهای پیشرفته">
+    <meta name="keywords" content="آمار, تحلیل داده, ضریب هوشی, جدول فراوانی, نمودار, Chart.js">
+    <meta name="author" content="Mohammad Amouei">
+    <title>تحلیل آماری کامل - داده‌های ضریب هوشی</title>
+    
+    <!-- فونت‌ها -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- کتابخانه‌های ضروری -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jstat@1.9.5/dist/jstat.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-zoom@1.2.1/dist/chartjs-plugin-zoom.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@1.4.0/dist/chartjs-plugin-annotation.min.js"></script>
+    
+    <style>
+        /* متغیرهای CSS - طراحی مدرن */
+        :root {
+            /* رنگ‌های اصلی */
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --primary-light: #60a5fa;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --info: #0ea5e9;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --darker: #111827;
+            --light: #f3f4f6;
+            --lighter: #ffffff;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+            
+            /* گرادیان‌ها */
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            --gradient-secondary: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+            --gradient-success: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            --gradient-warning: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --gradient-danger: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            --gradient-dark: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+            
+            /* سایه‌ها */
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 50px rgba(0,0,0,0.2);
+            
+            /* انیمیشن‌ها */
+            --transition-fast: all 0.2s ease;
+            --transition-normal: all 0.3s ease;
+            --transition-slow: all 0.5s ease;
+            
+            /* شعاع‌ها */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --radius-full: 9999px;
+            
+            /* فاصله‌ها */
+            --spacing-xs: 4px;
+            --spacing-sm: 8px;
+            --spacing-md: 16px;
+            --spacing-lg: 24px;
+            --spacing-xl: 32px;
+            --spacing-2xl: 48px;
+            
+            /* تایپوگرافی */
+            --font-primary: 'Vazirmatn', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
+        /* حالت تاریک */
+        body.dark-mode {
+            --primary: #60a5fa;
+            --primary-dark: #3b82f6;
+            --primary-light: #93c5fd;
+            --secondary: #a78bfa;
+            --success: #34d399;
+            --info: #38bdf8;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --dark: #f9fafb;
+            --darker: #f3f4f6;
+            --light: #1f2937;
+            --lighter: #111827;
+            --muted: #9ca3af;
+            --border: #374151;
+            
+            --gradient-primary: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+            --gradient-dark: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+            
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.4);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        /* Reset و Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            transition: var(--transition-normal);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Container اصلی */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: var(--spacing-lg);
+        }
+
+        /* Card استایل */
+        .card {
+            background: var(--lighter);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin-bottom: var(--spacing-xl);
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            transition: var(--transition-normal);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-2px);
+        }
+
+        /* هدر اصلی */
+        .main-header {
+            text-align: center;
+            margin-bottom: var(--spacing-2xl);
+            padding: var(--spacing-xl);
+            background: var(--gradient-primary);
+            border-radius: var(--radius-xl);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+
+        .main-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: var(--spacing-sm);
+            position: relative;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .main-header h3 {
+            font-size: 1.2rem;
+            font-weight: 400;
+            opacity: 0.9;
+            margin-bottom: var(--spacing-md);
+            position: relative;
+        }
+
+        /* Chip استایل برای داده‌ها */
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--spacing-sm);
+            margin: var(--spacing-lg) 0;
+            padding: var(--spacing-md);
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+        }
+
+        .chip {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            border-radius: var(--radius-full);
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            transition: var(--transition-fast);
+        }
+
+        .chip:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        /* جدول فراوانی */
+        .table-container {
+            overflow-x: auto;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            margin: var(--spacing-lg) 0;
+            position: relative;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        thead th {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            padding: var(--spacing-md);
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        tbody td {
+            padding: var(--spacing-md);
+            border-bottom: 1px solid var(--border);
+            text-align: center;
+            background: var(--lighter);
+            transition: var(--transition-fast);
+        }
+
+        tbody tr:hover td {
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        tbody tr:nth-child(even) td {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .dark-mode tbody tr:nth-child(even) td {
+            background: rgba(255,255,255,0.02);
+        }
+
+        /* Status bar */
+        .status {
+            display: flex;
+            gap: var(--spacing-xl);
+            margin-top: var(--spacing-lg);
+            padding: var(--spacing-md);
+            background: rgba(59, 130, 246, 0.05);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .status span {
+            font-size: 0.9rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* کنترل‌های اصلی */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-xl);
+            padding: var(--spacing-md);
+            background: var(--lighter);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: var(--spacing-md);
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+        }
+
+        .btn {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            border-radius: var(--radius-full);
+            font-family: var(--font-primary);
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+            transition: var(--transition-normal);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-secondary);
+        }
+
+        .btn-success {
+            background: var(--gradient-success);
+        }
+
+        /* سوئیچ حالت تاریک */
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--border);
+            border-radius: var(--radius-full);
+            position: relative;
+            cursor: pointer;
+            transition: var(--transition-normal);
+        }
+
+        .theme-toggle::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            transition: var(--transition-normal);
+        }
+
+        .dark-mode .theme-toggle::after {
+            transform: translateX(-24px);
+            background: var(--warning);
+        }
+
+        /* داشبورد آمار */
+        .stats-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-lg);
+            margin: var(--spacing-xl) 0;
+        }
+
+        .stat-card {
+            background: var(--lighter);
+            border-radius: var(--radius-lg);
+            padding: var(--spacing-lg);
+            text-align: center;
+            border: 1px solid var(--border);
+            transition: var(--transition-normal);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto var(--spacing-md);
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* شبکه نمودارها */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+            gap: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+        }
+
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .chart-card {
+            background: var(--lighter);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-lg);
+            border: 1px solid var(--border);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-lg);
+            padding-bottom: var(--spacing-md);
+            border-bottom: 2px solid var(--border);
+        }
+
+        .chart-title {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-md);
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .chart-title i {
+            color: var(--primary);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+
+        .chart-controls {
+            display: flex;
+            gap: var(--spacing-sm);
+        }
+
+        .chart-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-md);
+            background: var(--light);
+            border: 1px solid var(--border);
+            color: var(--dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-fast);
+        }
+
+        .chart-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* توضیحات نمودار */
+        .explanation {
+            background: rgba(59, 130, 246, 0.05);
+            border-right: 4px solid var(--primary);
+            padding: var(--spacing-lg);
+            border-radius: var(--radius-lg);
+            margin-top: var(--spacing-lg);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .explanation h4 {
+            color: var(--primary-dark);
+            margin-bottom: var(--spacing-md);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .explanation p {
+            color: var(--muted);
+            margin-bottom: var(--spacing-md);
+            line-height: 1.7;
+        }
+
+        .explanation ul {
+            margin-right: var(--spacing-lg);
+            margin-bottom: var(--spacing-md);
+        }
+
+        .explanation li {
+            color: var(--muted);
+            margin-bottom: var(--spacing-xs);
+            line-height: 1.6;
+        }
+
+        /* بخش فرمول‌ها */
+        .methods {
+            background: var(--lighter);
+            border-radius: var(--radius-xl);
+            padding: var(--spacing-xl);
+            margin: var(--spacing-xl) 0;
+            border: 1px solid var(--border);
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .methods h2 {
+            color: var(--dark);
+            margin-bottom: var(--spacing-lg);
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-sm);
+        }
+
+        .formula-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: var(--spacing-md);
+        }
+
+        .formula-list li {
+            background: var(--light);
+            padding: var(--spacing-md);
+            border-radius: var(--radius-lg);
+            border: 1px dashed var(--border);
+            transition: var(--transition-fast);
+        }
+
+        .formula-list li:hover {
+            background: rgba(59, 130, 246, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .formula-list strong {
+            color: var(--dark);
+            display: block;
+            margin-bottom: var(--spacing-xs);
+        }
+
+        .formula-list code {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.05);
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            color: var(--danger);
+            font-size: 0.9rem;
+        }
+
+        /* فوتور */
+        .footer {
+            text-align: center;
+            padding: var(--spacing-2xl) var(--spacing-lg);
+            margin-top: var(--spacing-2xl);
+            background: var(--gradient-dark);
+            color: white;
+            border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+        }
+
+        .footer p {
+            margin: var(--spacing-md) 0;
+            opacity: 0.9;
+        }
+
+        .footer small {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* انیمیشن‌ها */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .animate-slide-in {
+            animation: slideIn 0.6s ease-out;
+        }
+
+        /* اسکرول بار سفارشی */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--light);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: var(--radius-full);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* رسپانسیو */
+        @media (max-width: 768px) {
+            .container {
+                padding: var(--spacing-md);
+            }
+            
+            .main-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .main-header h3 {
+                font-size: 1rem;
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .control-group {
+                justify-content: center;
+            }
+            
+            .table-container {
+                margin: var(--spacing-md) -16px;
+                border-radius: 0;
+                border-right: none;
+                border-left: none;
+            }
+        }
+
+        /* استایل‌های چاپ */
+        @media print {
+            .controls, .chart-controls, .footer {
+                display: none !important;
+            }
+            
+            .card, .chart-card {
+                break-inside: avoid;
+                box-shadow: none !important;
+                border: 1px solid #ddd !important;
+            }
+            
+            .charts-grid {
+                display: block;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <h1>نمایش جدول فراوانی — داده‌های استخراج‌شده</h1>
-      <h3>ضریب هوشی 50 دانش آموز یک دبستان ابتدایی به شکل زیر است ، جدول فراوانی برای آن رسم کنید و به سوالات زیر پاسخ دهید</h2>
-      <h5>چند درصد دانش آموزان ضریب هوشی بین 103.6 تا 113.5 دارند؟ 10 درصد</h5>
-      <h5>چند درصد دانش آموزان ضریب هوشی بالای 118.5 دارند؟ 12 درصد</h5>
-      <div class="chips"><span class="chip">117.00</span><span class="chip">112.00</span><span class="chip">108.00</span><span class="chip">111.00</span><span class="chip">121.00</span><span class="chip">98.00</span><span class="chip">102</span><span class="chip">110</span><span class="chip">104</span><span class="chip">112</span><span class="chip">97</span><span class="chip">100.00</span><span class="chip">128.00</span><span class="chip">115.00</span><span class="chip">122.00</span><span class="chip">115.00</span><span class="chip">94.00</span><span class="chip">108.00</span><span class="chip">99.00</span><span class="chip">98.00</span><span class="chip">113.00</span><span class="chip">110.00</span><span class="chip">120.00</span><span class="chip">98.00</span><span class="chip">123.00</span><span class="chip">118.00</span><span class="chip">107.00</span><span class="chip">101.00</span><span class="chip">106.00</span><span class="chip">109.00</span><span class="chip">119.00</span><span class="chip">115.00</span><span class="chip">107.00</span><span class="chip">106.00</span><span class="chip">112.00</span><span class="chip">116.00</span><span class="chip">103.00</span><span class="chip">108.00</span><span class="chip">106.00</span><span class="chip">126.00</span><span class="chip">125.00</span><span class="chip">113.00</span><span class="chip">116.00</span><span class="chip">109.00</span><span class="chip">111.00</span><span class="chip">113.00</span><span class="chip">123.00</span><span class="chip">105.00</span><span class="chip">114.00</span><span class="chip">110.00</span></div>
-      <div style="margin-top:10px;overflow:auto">
-        <table>
-          <thead><tr><th>رده‌ها</th><th>xᵢ (نمایندهٔ رده)</th><th>fᵢ (فراوانی)</th><th>rᵢ (فراوانی نسبتی)</th><th>Fᵢ (فراوانی تجمعی)</th><th>Rᵢ (فراوانی تجمعی نسبتی)</th></tr></thead>
-          <tbody><tr><td>93.5 - 98.5</td><td>96</td><td>5</td><td>0.1</td><td>5</td><td>0.1</td></tr>
-<tr><td>98.5 - 103.5</td><td>101</td><td>5</td><td>0.1</td><td>10</td><td>0.2</td></tr>
-<tr><td>103.5 - 108.5</td><td>106</td><td>10</td><td>0.2</td><td>20</td><td>0.4</td></tr>
-<tr><td>108.5 - 113.5</td><td>111</td><td>13</td><td>0.26</td><td>33</td><td>0.66</td></tr>
-<tr><td>113.5 - 118.5</td><td>116</td><td>8</td><td>0.16</td><td>41</td><td>0.82</td></tr>
-<tr><td>118.5 - 128.5</td><td>121</td><td>6</td><td>0.12</td><td>47</td><td>0.94</td></tr>
-</tbody>
-        </table>
-      </div>
-      <div class="status"><span>n = 50</span><span>k = 5</span><span>بازه: 94.00 … 128.00</span></div>
-
+    <!-- هدر اصلی -->
+    <div class="main-header">
+        <h1><i class="fas fa-chart-line"></i> سیستم تحلیل آماری پیشرفته</h1>
+        <h3>تحلیل کامل داده‌های ضریب هوشی ۵۰ دانش‌آموز دبستانی</h3>
+        <p>با قابلیت‌های نموداری کامل و تحلیل‌های آماری پیشرفته</p>
     </div>
-  </div>
-  
-<!-- بخش: روش و فرمول‌ها (توضیح ستون‌ها و فرمول‌ها) -->
-<style>
-  /* استایل کوچک و مستقل؛ می‌تونی به <style> اصلی هم منتقلش کنی */
-  .methods{margin-top:12px;background:#fafafa;border:1px solid var(--border);border-radius:12px;padding:12px}
-  .methods h2{font-size:18px;margin:0 0 8px}
-  .methods p{margin:0 0 8px;color:var(--muted)}
-  .formula-list{margin:8px 0 0;padding:0;list-style:none}
-  .formula-list li{margin:6px 0;padding:8px;border:1px dashed var(--border);border-radius:10px;background:#fff}
-  .formula-list code{font-family:ui-monospace,Consolas,monospace;padding:0 .2em}
-</style>
 
-<div class="methods" aria-labelledby="methods-title">
-  <h2 id="methods-title">روش و فرمول‌های ستون‌ها</h2>
-  <p>در این جدول، نمادها و محاسبات هر ستون به‌صورت خلاصه چنین است:</p>
-  <ul class="formula-list">
-      <li>
-      <strong>k (استورگس):</strong>
-      برای گسسته: <code>k = 1 + 3.22 * log(n)</code>
-    </li>
-    <li>
-      <strong>رده‌ها (کلاس‌ها):</strong>
-      رده ها از سطر اول از کوچکترین مقدار داده ها آغاز گردید که به مقدار k تا به ان افزوده شد تا بتوان کرانه بالا و پایین آن سطر  را بدست آورد و دیگر سطر ها هم به همین ترتیب تا آخرین سطر ادامه خواهد داشت
-    </li>
-    <li>
-      <strong>xᵢ (نمایندهٔ رده):</strong>
-      برای گسسته: <code>xᵢ = (کرانه بالا + کرانه پایین) / 2</code> &nbsp;&nbsp;
-    </li>
-    <li>
-      <strong>fᵢ (فراوانی):</strong>
-      تعداد داده ای که در بازه سطر فعلی در کل داده ها وجود دارد
-   </li>
-    <li>
-      <strong>rᵢ (فراوانی نسبتی):</strong>
-      <code>rᵢ = fᵢ / n</code>
-    </li>
-    <li>
-      <strong>Fᵢ (فراوانی تجمعی):</strong>
-      جمع تعداد فراوانی های سطر فعلی تا سطر اول
-    </li>
-    <li>
-      <strong>Rᵢ (فراوانی تجمعی نسبتی):</strong>
-      <code>Rᵢ = Fᵢ / n</code>
-    </li>
-    <li>
-    </li>
-  </ul>
-</div> 
-  <h5 style="text-align: center;">Made It By Mohammad Amouei</h5>
+    <div class="container">
+        <!-- کارت اصلی داده‌ها -->
+        <div class="card animate-fade-in">
+            <h2 style="color: var(--dark); margin-bottom: var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-md);">
+                <i class="fas fa-database"></i>
+                داده‌های اصلی و جدول فراوانی
+            </h2>
+            
+            <h3 style="color: var(--primary-dark); margin-bottom: var(--spacing-md);">
+                ضریب هوشی 50 دانش آموز یک دبستان ابتدایی
+            </h3>
+            
+            <div style="background: rgba(239, 68, 68, 0.1); padding: var(--spacing-md); border-radius: var(--radius-lg); margin-bottom: var(--spacing-lg); border-right: 4px solid var(--danger);">
+                <h4 style="color: var(--danger); margin-bottom: var(--spacing-sm);">
+                    <i class="fas fa-question-circle"></i>
+                    سوالات تحلیلی
+                </h4>
+                <p style="color: var(--dark);"><strong>چند درصد دانش‌آموزان ضریب هوشی بین 103.6 تا 113.5 دارند؟</strong> <span style="color: var(--success); font-weight: bold;">10 درصد</span></p>
+                <p style="color: var(--dark);"><strong>چند درصد دانش‌آموزان ضریب هوشی بالای 118.5 دارند؟</strong> <span style="color: var(--success); font-weight: bold;">12 درصد</span></p>
+            </div>
+
+            <!-- داده‌های خام -->
+            <h4 style="color: var(--dark); margin-bottom: var(--spacing-sm);">
+                <i class="fas fa-list"></i>
+                داده‌های خام
+            </h4>
+            <div class="chips">
+                <span class="chip">117.00</span><span class="chip">112.00</span><span class="chip">108.00</span><span class="chip">111.00</span><span class="chip">121.00</span>
+                <span class="chip">98.00</span><span class="chip">102</span><span class="chip">110</span><span class="chip">104</span><span class="chip">112</span>
+                <span class="chip">97</span><span class="chip">100.00</span><span class="chip">128.00</span><span class="chip">115.00</span><span class="chip">122.00</span>
+                <span class="chip">115.00</span><span class="chip">94.00</span><span class="chip">108.00</span><span class="chip">99.00</span><span class="chip">98.00</span>
+                <span class="chip">113.00</span><span class="chip">110.00</span><span class="chip">120.00</span><span class="chip">98.00</span><span class="chip">123.00</span>
+                <span class="chip">118.00</span><span class="chip">107.00</span><span class="chip">101.00</span><span class="chip">106.00</span><span class="chip">109.00</span>
+                <span class="chip">119.00</span><span class="chip">115.00</span><span class="chip">107.00</span><span class="chip">106.00</span><span class="chip">112.00</span>
+                <span class="chip">116.00</span><span class="chip">103.00</span><span class="chip">108.00</span><span class="chip">106.00</span><span class="chip">126.00</span>
+                <span class="chip">125.00</span><span class="chip">113.00</span><span class="chip">116.00</span><span class="chip">109.00</span><span class="chip">111.00</span>
+                <span class="chip">113.00</span><span class="chip">123.00</span><span class="chip">105.00</span><span class="chip">114.00</span><span class="chip">110.00</span>
+            </div>
+
+            <!-- جدول فراوانی -->
+            <h4 style="color: var(--dark); margin-top: var(--spacing-xl); margin-bottom: var(--spacing-sm);">
+                <i class="fas fa-table"></i>
+                جدول فراوانی
+            </h4>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>رده‌ها</th>
+                            <th>xᵢ (نماینده رده)</th>
+                            <th>fᵢ (فراوانی)</th>
+                            <th>rᵢ (فراوانی نسبتی)</th>
+                            <th>Fᵢ (فراوانی تجمعی)</th>
+                            <th>Rᵢ (فراوانی تجمعی نسبتی)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>93.5 - 98.5</td><td>96</td><td>5</td><td>0.1</td><td>5</td><td>0.1</td></tr>
+                        <tr><td>98.5 - 103.5</td><td>101</td><td>5</td><td>0.1</td><td>10</td><td>0.2</td></tr>
+                        <tr><td>103.5 - 108.5</td><td>106</td><td>10</td><td>0.2</td><td>20</td><td>0.4</td></tr>
+                        <tr><td>108.5 - 113.5</td><td>111</td><td>13</td><td>0.26</td><td>33</td><td>0.66</td></tr>
+                        <tr><td>113.5 - 118.5</td><td>116</td><td>8</td><td>0.16</td><td>41</td><td>0.82</td></tr>
+                        <tr><td>118.5 - 128.5</td><td>121</td><td>6</td><td>0.12</td><td>47</td><td>0.94</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="status">
+                <span><i class="fas fa-users"></i> n = 50</span>
+                <span><i class="fas fa-layer-group"></i> k = 6</span>
+                <span><i class="fas fa-arrows-alt-h"></i> بازه: 94.00 … 128.00</span>
+                <span><i class="fas fa-ruler-combined"></i> دامنه: 34.00</span>
+            </div>
+        </div>
+
+        <!-- کنترل‌های سیستم -->
+        <div class="controls animate-slide-in">
+            <div class="control-group">
+                <button class="btn" onclick="exportToPDF()">
+                    <i class="fas fa-file-pdf"></i>
+                    خروجی PDF
+                </button>
+                <button class="btn btn-secondary" onclick="exportCharts()">
+                    <i class="fas fa-download"></i>
+                    ذخیره نمودارها
+                </button>
+                <button class="btn btn-success" onclick="toggleTheme()">
+                    <i class="fas fa-moon"></i>
+                    تغییر تم
+                </button>
+            </div>
+            
+            <div class="control-group">
+                <span style="color: var(--muted); font-size: 0.9rem;">حالت تاریک:</span>
+                <div class="theme-toggle" onclick="toggleTheme()"></div>
+            </div>
+        </div>
+
+        <!-- داشبورد آمار کلیدی -->
+        <div class="stats-dashboard animate-fade-in">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <div class="stat-value" id="statMean">110.55</div>
+                <div class="stat-label">میانگین ضریب هوشی</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--gradient-secondary);">
+                    <i class="fas fa-sort-amount-up"></i>
+                </div>
+                <div class="stat-value" id="statMedian">111.00</div>
+                <div class="stat-label">میانه</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--gradient-success);">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="stat-value" id="statStd">8.29</div>
+                <div class="stat-label">انحراف معیار</div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon" style="background: var(--gradient-danger);">
+                    <i class="fas fa-arrows-alt-h"></i>
+                </div>
+                <div class="stat-value" id="statRange">34.00</div>
+                <div class="stat-label">دامنه تغییرات</div>
+            </div>
+        </div>
+
+        <!-- شبکه نمودارها -->
+        <h2 style="color: var(--dark); margin: var(--spacing-2xl) 0 var(--spacing-lg); display: flex; align-items: center; gap: var(--spacing-md);">
+            <i class="fas fa-chart-bar"></i>
+            نمودارهای آماری
+        </h2>
+
+        <div class="charts-grid">
+            <!-- نمودار ستونی -->
+            <div class="chart-card animate-fade-in">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-bar"></i>
+                        ۱. نمودار ستونی (Bar Chart)
+                    </div>
+                    <div class="chart-controls">
+                        <button class="chart-btn" title="دانلود" onclick="downloadChart('barChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="chart-btn" title="بزرگنمایی" onclick="zoomChart('barChart')">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div class="explanation">
+                    <h4><i class="fas fa-info-circle"></i> توضیحات آماری نمودار ستونی</h4>
+                    <p>نمودار ستونی مناسب نمایش توزیع فراوانی داده‌های گروه‌بندی شده است:</p>
+                    <ul>
+                        <li>محور X نشان‌دهنده رده‌های ضریب هوشی است</li>
+                        <li>محور Y نشان‌دهنده تعداد دانش‌آموزان در هر رده است</li>
+                        <li>ارتفاع هر ستون متناسب با فراوانی آن رده است</li>
+                        <li>بیشترین فراوانی مربوط به رده 108.5-113.5 با 13 دانش‌آموز است</li>
+                        <li>توزیع داده‌ها تقریباً نرمال با تمرکز در وسط است</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- نمودار خطی -->
+            <div class="chart-card animate-fade-in">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-line"></i>
+                        ۲. نمودار خطی فراوانی تجمعی
+                    </div>
+                    <div class="chart-controls">
+                        <button class="chart-btn" title="دانلود" onclick="downloadChart('lineChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="chart-btn" title="بزرگنمایی" onclick="zoomChart('lineChart')">
+                            <i class="fas fa-search-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="lineChart"></canvas>
+                </div>
+                <div class="explanation">
+                    <h4><i class="fas fa-info-circle"></i> توضیحات آماری نمودار خطی</h4>
+                    <p>نمودار خطی فراوانی تجمعی (اوجایو) برای نمایش سیر تجمعی داده‌ها استفاده می‌شود:</p>
+                    <ul>
+                        <li>نمودار سیر صعودی دارد که نشان‌دهنده افزایش تجمعی فراوانی است</li>
+                        <li>شیب نمودار در رده‌های با فراوانی بیشتر، تندتر است</li>
+                        <li>نقطه 50% (میانه) تقریباً در رده 108.5-113.5 قرار دارد</li>
+                        <li>نمودار به 100% نمی‌رسد که نشان‌دهنده وجود داده‌های پرت است</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- نمودار دایره‌ای -->
+            <div class="chart-card animate-fade-in">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-pie"></i>
+                        ۳. نمودار دایره‌ای (Pie Chart)
+                    </div>
+                    <div class="chart-controls">
+                        <button class="chart-btn" title="دانلود" onclick="downloadChart('pieChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="chart-btn" title="چرخش" onclick="rotatePieChart()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div class="explanation">
+                    <h4><i class="fas fa-info-circle"></i> توضیحات آماری نمودار دایره‌ای</h4>
+                    <p>نمودار دایره‌ای سهم هر رده از کل جامعه آماری را نشان می‌دهد:</p>
+                    <ul>
+                        <li>بزرگترین بخش (26%) مربوط به رده 108.5-113.5 است</li>
+                        <li>کوچکترین بخش (10%) مربوط به رده‌های اول و دوم است</li>
+                        <li>تقریباً نیمی از دانش‌آموزان (46%) در رده‌های 103.5-113.5 قرار دارند</li>
+                        <li>12% دانش‌آموزان در رده بالایی (118.5-128.5) قرار دارند</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- هیستوگرام -->
+            <div class="chart-card animate-fade-in">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-area"></i>
+                        ۴. هیستوگرام (Histogram)
+                    </div>
+                    <div class="chart-controls">
+                        <button class="chart-btn" title="دانلود" onclick="downloadChart('histogramChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="chart-btn" title="تغییر عرض بین‌ها" onclick="changeBinWidth()">
+                            <i class="fas fa-sliders-h"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="histogramChart"></canvas>
+                </div>
+                <div class="explanation">
+                    <h4><i class="fas fa-info-circle"></i> توضیحات آماری هیستوگرام</h4>
+                    <p>هیستوگرام نسخه پیوسته نمودار ستونی برای داده‌های کمی است:</p>
+                    <ul>
+                        <li>ستون‌ها به هم چسبیده‌اند (برخلاف نمودار ستونی)</li>
+                        <li>مساحت هر ستون متناسب با فراوانی است</li>
+                        <li>توزیع داده‌ها کمی چوله به راست است (Right-skewed)</li>
+                        <li>بیشترین تراکم داده در بازه 108-113 مشاهده می‌شود</li>
+                        <li>وجود دم در سمت راست نشان‌دهنده دانش‌آموزان با ضریب هوشی بالا است</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- نمودار پراکندگی -->
+            <div class="chart-card animate-fade-in">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-braille"></i>
+                        ۵. نمودار پراکندگی (Scatter Plot)
+                    </div>
+                    <div class="chart-controls">
+                        <button class="chart-btn" title="دانلود" onclick="downloadChart('scatterChart')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="chart-btn" title="نمایش روند" onclick="toggleTrendLine()">
+                            <i class="fas fa-line-chart"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="scatterChart"></canvas>
+                </div>
+                <div class="explanation">
+                    <h4><i class="fas fa-info-circle"></i> توضیحات آماری نمودار پراکندگی</h4>
+                    <p>نمودار پراکندگی رابطه بین شاخص رده و فراوانی را نشان می‌دهد:</p>
+                    <ul>
+                        <li>هر نقطه نشان‌دهنده یک رده است</li>
+                        <li>محور X: نماینده رده (مرکز هر بازه)</li>
+                        <li>محور Y: فراوانی هر رده</li>
+                        <li>الگوی نقاط یک منحنی نرمال وارون را نشان می‌دهد</li>
+                        <li>اوج نمودار در حدود ضریب هوشی 111 مشاهده می‌شود</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- آمار کلیدی -->
+            <div class="chart-card animate-fade-in">
+                <div class="chart-header">
+                    <div class="chart-title">
+                        <i class="fas fa-chart-line"></i>
+                        آمار کلیدی و خلاصه تحلیل
+                    </div>
+                </div>
+                <div style="padding: var(--spacing-lg);">
+                    <h4 style="color: var(--primary-dark); margin-bottom: var(--spacing-lg);">
+                        <i class="fas fa-calculator"></i>
+                        شاخص‌های آماری محاسبه شده
+                    </h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-md);">
+                        <div style="background: rgba(59, 130, 246, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
+                            <h5 style="color: var(--primary); margin-bottom: var(--spacing-sm);">میانگین (Mean)</h5>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>110.55</strong></p>
+                            <small style="color: var(--muted);">محاسبه‌شده از مجموع fi × میانه رده تقسیم بر n=50</small>
+                        </div>
+                        
+                        <div style="background: rgba(124, 58, 237, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
+                            <h5 style="color: var(--secondary); margin-bottom: var(--spacing-sm);">میانه (Median)</h5>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>111.00</strong></p>
+                            <small style="color: var(--muted);">رده میانی در داده‌های مرتب‌شده</small>
+                        </div>
+                        
+                        <div style="background: rgba(16, 185, 129, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
+                            <h5 style="color: var(--success); margin-bottom: var(--spacing-sm);">مد (Mode)</h5>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>106 و 113</strong></p>
+                            <small style="color: var(--muted);">بیشترین تکرار در داده‌ها</small>
+                        </div>
+                        
+                        <div style="background: rgba(245, 158, 11, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
+                            <h5 style="color: var(--warning); margin-bottom: var(--spacing-sm);">واریانس (Variance)</h5>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>68.74</strong></p>
+                            <small style="color: var(--muted);">پراکندگی داده‌ها حول میانگین</small>
+                        </div>
+                        
+                        <div style="background: rgba(239, 68, 68, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
+                            <h5 style="color: var(--danger); margin-bottom: var(--spacing-sm);">انحراف معیار (Std Dev)</h5>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>8.29</strong></p>
+                            <small style="color: var(--muted);">ریشه دوم واریانس (مقیاس پراکندگی)</small>
+                        </div>
+                        
+                        <div style="background: rgba(14, 165, 233, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
+                            <h5 style="color: var(--info); margin-bottom: var(--spacing-sm);">دامنه (Range)</h5>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>34.00</strong></p>
+                            <small style="color: var(--muted);">حداکثر ۱۲۸ - حداقل ۹۴</small>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: var(--spacing-xl); padding: var(--spacing-lg); background: rgba(59, 130, 246, 0.05); border-radius: var(--radius-lg);">
+                        <h5 style="color: var(--primary-dark); margin-bottom: var(--spacing-sm);">
+                            <i class="fas fa-lightbulb"></i>
+                            تحلیل نتیجه
+                        </h5>
+                        <p style="color: var(--dark); line-height: 1.7;">
+                            داده‌های ضریب هوشی نشان‌دهنده توزیع نسبتاً نرمال با کمی چوله‌گی به سمت راست است. 
+                            میانگین ۱۱۰.۵۵ نشان‌دهنده هوش بالاتر از متوسط در این گروه است. 
+                            انحراف معیار ۸.۲۹ نشان می‌دهد که داده‌ها پراکندگی متوسطی دارند. 
+                            وجود ۱۲٪ دانش‌آموزان با ضریب هوشی بالای ۱۱۸.۵ نشان‌دهنده استعدادهای درخشان در این کلاس است.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- بخش فرمول‌ها -->
+        <div class="methods animate-fade-in">
+            <h2><i class="fas fa-calculator"></i> روش و فرمول‌های ستون‌ها</h2>
+            <p style="color: var(--muted); margin-bottom: var(--spacing-lg);">
+                در این جدول، نمادها و محاسبات هر ستون به‌صورت خلاصه چنین است:
+            </p>
+            
+            <ul class="formula-list">
+                <li>
+                    <strong>k (تعداد رده‌ها - قانون استورجس):</strong>
+                    <code>k = 1 + 3.322 × log₁₀(n)</code>
+                    <small style="color: var(--muted); display: block; margin-top: 4px;">برای n=50: k = 1 + 3.322 × 1.699 = 6.64 ≈ 6</small>
+                </li>
+                <li>
+                    <strong>رده‌ها (کلاس‌ها):</strong>
+                    از کوچکترین مقدار داده‌ها آغاز می‌شود و با اضافه کردن دامنه رده (R/k) تا آخرین رده ادامه می‌یابد.
+                </li>
+                <li>
+                    <strong>xᵢ (نمایندهٔ رده):</strong>
+                    <code>xᵢ = (کرانه بالا + کرانه پایین) ÷ 2</code>
+                    <small style="color: var(--muted); display: block; margin-top: 4px;">مثال: (98.5 + 93.5) ÷ 2 = 96</small>
+                </li>
+                <li>
+                    <strong>fᵢ (فراوانی):</strong>
+                    تعداد داده‌هایی که در بازه هر رده قرار می‌گیرند.
+                </li>
+                <li>
+                    <strong>rᵢ (فراوانی نسبتی):</strong>
+                    <code>rᵢ = fᵢ ÷ n</code>
+                    <small style="color: var(--muted); display: block; margin-top: 4px;">مثال: 5 ÷ 50 = 0.1</small>
+                </li>
+                <li>
+                    <strong>Fᵢ (فراوانی تجمعی):</strong>
+                    جمع فراوانی‌ها از رده اول تا رده فعلی.
+                </li>
+                <li>
+                    <strong>Rᵢ (فراوانی تجمعی نسبتی):</strong>
+                    <code>Rᵢ = Fᵢ ÷ n</code>
+                    <small style="color: var(--muted); display: block; margin-top: 4px;">مثال: 33 ÷ 50 = 0.66</small>
+                </li>
+            </ul>
+        </div>
+
+        <!-- فوتور -->
+        <div class="footer">
+            <h3 style="margin-bottom: var(--spacing-md);">
+                <i class="fas fa-brain"></i>
+                پروژه تحلیل آماری پیشرفته
+            </h3>
+            <small>© 2025 ساخته شده با ❤️ توسط محمد عمویی | تمام حقوق محفوظ است</small>
+
+        </div>
+    </div>
+
+    <script>
+        // داده‌های اصلی
+        const rawData = [
+            117.00, 112.00, 108.00, 111.00, 121.00, 98.00, 102, 110, 104, 112,
+            97, 100.00, 128.00, 115.00, 122.00, 115.00, 94.00, 108.00, 99.00,
+            98.00, 113.00, 110.00, 120.00, 98.00, 123.00, 118.00, 107.00,
+            101.00, 106.00, 109.00, 119.00, 115.00, 107.00, 106.00, 112.00,
+            116.00, 103.00, 108.00, 106.00, 126.00, 125.00, 113.00, 116.00,
+            109.00, 111.00, 113.00, 123.00, 105.00, 114.00, 110.00
+        ];
+
+        // داده‌های گروه‌بندی شده
+        const frequencyData = {
+            labels: ['93.5-98.5', '98.5-103.5', '103.5-108.5', '108.5-113.5', '113.5-118.5', '118.5-128.5'],
+            frequencies: [5, 5, 10, 13, 8, 6],
+            representatives: [96, 101, 106, 111, 116, 121],
+            cumulative: [5, 10, 20, 33, 41, 47],
+            relative: [0.1, 0.1, 0.2, 0.26, 0.16, 0.12]
+        };
+
+        // رنگ‌ها برای نمودارها
+        const colors = [
+            'rgba(59, 130, 246, 0.7)',
+            'rgba(16, 185, 129, 0.7)',
+            'rgba(245, 158, 11, 0.7)',
+            'rgba(239, 68, 68, 0.7)',
+            'rgba(139, 92, 246, 0.7)',
+            'rgba(14, 165, 233, 0.7)'
+        ];
+
+        const borderColors = [
+            'rgb(59, 130, 246)',
+            'rgb(16, 185, 129)',
+            'rgb(245, 158, 11)',
+            'rgb(239, 68, 68)',
+            'rgb(139, 92, 246)',
+            'rgb(14, 165, 233)'
+        ];
+
+        // متغیرهای عمومی
+        let charts = {};
+        let currentRotation = 0;
+
+        // محاسبه آمارهای پیشرفته
+        function calculateStatistics() {
+            const sorted = [...rawData].sort((a, b) => a - b);
+            const n = rawData.length;
+            
+            // میانگین
+            const mean = rawData.reduce((a, b) => a + b) / n;
+            
+            // میانه
+            const median = n % 2 === 0 
+                ? (sorted[n/2 - 1] + sorted[n/2]) / 2 
+                : sorted[Math.floor(n/2)];
+            
+            // مد
+            const freq = {};
+            rawData.forEach(x => freq[x] = (freq[x] || 0) + 1);
+            const maxFreq = Math.max(...Object.values(freq));
+            const modes = Object.keys(freq).filter(k => freq[k] === maxFreq);
+            
+            // واریانس و انحراف معیار
+            const variance = jStat.variance(rawData);
+            const stdDev = Math.sqrt(variance);
+            
+            // دامنه
+            const range = Math.max(...rawData) - Math.min(...rawData);
+            
+            return {
+                mean: mean.toFixed(2),
+                median: median.toFixed(2),
+                modes: modes.map(m => parseFloat(m).toFixed(1)).join(' و '),
+                variance: variance.toFixed(2),
+                stdDev: stdDev.toFixed(2),
+                range: range.toFixed(2)
+            };
+        }
+
+        // ایجاد نمودار ستونی
+        function createBarChart() {
+            const ctx = document.getElementById('barChart').getContext('2d');
+            
+            if (charts.barChart) {
+                charts.barChart.destroy();
+            }
+            
+            charts.barChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: frequencyData.labels,
+                    datasets: [{
+                        label: 'تعداد دانش‌آموزان',
+                        data: frequencyData.frequencies,
+                        backgroundColor: colors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            display: true,
+                            position: 'top',
+                            rtl: true,
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            rtl: true,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: 'rgba(255, 255, 255, 0.2)',
+                            borderWidth: 1,
+                            padding: 12
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'رده‌های ضریب هوشی',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'فراوانی',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                stepSize: 2
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+        }
+
+        // ایجاد نمودار خطی
+        function createLineChart() {
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            
+            if (charts.lineChart) {
+                charts.lineChart.destroy();
+            }
+            
+            charts.lineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: frequencyData.labels,
+                    datasets: [{
+                        label: 'فراوانی تجمعی',
+                        data: frequencyData.cumulative,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            display: true,
+                            position: 'top',
+                            rtl: true
+                        },
+                        annotation: {
+                            annotations: {
+                                line1: {
+                                    type: 'line',
+                                    yMin: 25,
+                                    yMax: 25,
+                                    borderColor: 'rgb(239, 68, 68)',
+                                    borderWidth: 2,
+                                    borderDash: [5, 5],
+                                    label: {
+                                        content: '50% دانش‌آموزان',
+                                        enabled: true,
+                                        position: 'start',
+                                        backgroundColor: 'rgb(239, 68, 68)',
+                                        color: '#fff',
+                                        font: {
+                                            size: 12
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'رده‌های ضریب هوشی',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'فراوانی تجمعی',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            max: 50
+                        }
+                    }
+                }
+            });
+        }
+
+        // ایجاد نمودار دایره‌ای
+        function createPieChart() {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            
+            if (charts.pieChart) {
+                charts.pieChart.destroy();
+            }
+            
+            charts.pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: frequencyData.labels,
+                    datasets: [{
+                        data: frequencyData.frequencies,
+                        backgroundColor: colors,
+                        borderColor: borderColors,
+                        borderWidth: 2,
+                        hoverOffset: 15
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'left',
+                            rtl: true,
+                            labels: {
+                                padding: 20,
+                                usePointStyle: true,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            rtl: true,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${context.label}: ${value} نفر (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true,
+                        duration: 2000
+                    }
+                }
+            });
+        }
+
+        // ایجاد هیستوگرام
+        function createHistogram() {
+            const ctx = document.getElementById('histogramChart').getContext('2d');
+            
+            // محاسبه هیستوگرام دقیق‌تر
+            const binCount = 8;
+            const min = Math.min(...rawData);
+            const max = Math.max(...rawData);
+            const binWidth = (max - min) / binCount;
+            
+            const histogramData = new Array(binCount).fill(0);
+            const histogramLabels = [];
+            
+            for (let i = 0; i < binCount; i++) {
+                const binStart = min + i * binWidth;
+                const binEnd = binStart + binWidth;
+                histogramLabels.push(`${binStart.toFixed(1)}-${binEnd.toFixed(1)}`);
+                
+                rawData.forEach(value => {
+                    if (value >= binStart && value < binEnd) {
+                        histogramData[i]++;
+                    }
+                });
+            }
+            
+            if (charts.histogramChart) {
+                charts.histogramChart.destroy();
+            }
+            
+            charts.histogramChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: histogramLabels,
+                    datasets: [{
+                        label: 'فراوانی',
+                        data: histogramData,
+                        backgroundColor: 'rgba(139, 92, 246, 0.6)',
+                        borderColor: 'rgb(139, 92, 246)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'محدوده ضریب هوشی',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'تعداد دانش‌آموزان',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            ticks: { stepSize: 2 }
+                        }
+                    }
+                }
+            });
+        }
+
+        // ایجاد نمودار پراکندگی
+        function createScatterChart() {
+            const ctx = document.getElementById('scatterChart').getContext('2d');
+            
+            // ایجاد داده‌های پراکندگی (index vs value)
+            const scatterData = rawData.map((value, index) => ({
+                x: index + 1,
+                y: value
+            }));
+            
+            if (charts.scatterChart) {
+                charts.scatterChart.destroy();
+            }
+            
+            charts.scatterChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'داده‌های خام',
+                        data: scatterData,
+                        backgroundColor: 'rgba(239, 68, 68, 0.7)',
+                        borderColor: 'rgb(239, 68, 68)',
+                        borderWidth: 1,
+                        pointRadius: 6,
+                        pointHoverRadius: 10
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            rtl: true
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'شماره نمونه',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'مقدار ضریب هوشی',
+                                font: {
+                                    size: 14,
+                                    weight: 'bold'
+                                }
+                            },
+                            min: 90,
+                            max: 130
+                        }
+                    }
+                }
+            });
+        }
+
+        // توابع کمکی
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+            
+            // به‌روزرسانی نمودارها با تم جدید
+            updateAllCharts();
+        }
+
+        function downloadChart(chartId) {
+            const chart = charts[chartId];
+            if (!chart) return;
+            
+            const link = document.createElement('a');
+            link.download = `نمودار-${chartId}-${new Date().toISOString().slice(0,10)}.png`;
+            link.href = chart.toBase64Image();
+            link.click();
+            
+            showNotification('نمودار با موفقیت دانلود شد');
+        }
+
+        function zoomChart(chartId) {
+            const chart = charts[chartId];
+            if (chart && chart.resetZoom) {
+                chart.resetZoom();
+            }
+        }
+
+        function rotatePieChart() {
+            if (charts.pieChart) {
+                currentRotation = (currentRotation + 45) % 360;
+                charts.pieChart.options.rotation = currentRotation * Math.PI / 180;
+                charts.pieChart.update();
+            }
+        }
+
+        function changeBinWidth() {
+            // در اینجا می‌توانید منطق تغییر عرض بین‌ها را پیاده‌سازی کنید
+            showNotification('تغییر عرض بین‌ها در حال توسعه است...');
+        }
+
+        function toggleTrendLine() {
+            // در اینجا می‌توانید منطق نمایش/مخفی کردن خط روند را پیاده‌سازی کنید
+            showNotification('خط روند در حال توسعه است...');
+        }
+
+        function exportToPDF() {
+            showNotification('قابلیت خروجی PDF در حال توسعه است...');
+        }
+
+        function exportCharts() {
+            showNotification('در حال ذخیره همه نمودارها...');
+            // می‌توانید اینجا منطق ذخیره همه نمودارها را اضافه کنید
+        }
+
+        function showNotification(message) {
+            // ایجاد یک اعلان ساده
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                background: var(--gradient-success);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 12px;
+                box-shadow: var(--shadow-lg);
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            notification.innerHTML = `<i class="fas fa-check-circle"></i> ${message}`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'fadeOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        function updateAllCharts() {
+            createBarChart();
+            createLineChart();
+            createPieChart();
+            createHistogram();
+            createScatterChart();
+        }
+
+        // مقداردهی اولیه
+        function init() {
+            // بارگذاری تنظیمات تم
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+            
+            // محاسبه آمارها
+            const stats = calculateStatistics();
+            document.getElementById('statMean').textContent = stats.mean;
+            document.getElementById('statMedian').textContent = stats.median;
+            document.getElementById('statStd').textContent = stats.stdDev;
+            document.getElementById('statRange').textContent = stats.range;
+            
+            // ایجاد نمودارها
+            updateAllCharts();
+            
+            // افزودن استایل برای انیمیشن fadeOut
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fadeOut {
+                    from { opacity: 1; transform: translateY(0); }
+                    to { opacity: 0; transform: translateY(20px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // بارگذاری اولیه
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
 </body>
 </html>

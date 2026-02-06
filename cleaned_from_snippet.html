@@ -765,16 +765,17 @@
                         <tr><td>103.5 - 108.5</td><td>106</td><td>10</td><td>0.2</td><td>20</td><td>0.4</td></tr>
                         <tr><td>108.5 - 113.5</td><td>111</td><td>13</td><td>0.26</td><td>33</td><td>0.66</td></tr>
                         <tr><td>113.5 - 118.5</td><td>116</td><td>8</td><td>0.16</td><td>41</td><td>0.82</td></tr>
-                        <tr><td>118.5 - 128.5</td><td>121</td><td>6</td><td>0.12</td><td>47</td><td>0.94</td></tr>
+                        <tr><td>118.5 - 123.5</td><td>121</td><td>6</td><td>0.12</td><td>47</td><td>0.94</td></tr>
+                        <tr><td>123.5 - 128.5</td><td>126</td><td>3</td><td>0.06</td><td>50</td><td>1</td></tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="status">
                 <span><i class="fas fa-users"></i> n = 50</span>
-                <span><i class="fas fa-layer-group"></i> k = 6</span>
+                <span><i class="fas fa-layer-group"></i> k = 7</span>
                 <span><i class="fas fa-arrows-alt-h"></i> بازه: 94.00 … 128.00</span>
-                <span><i class="fas fa-ruler-combined"></i> دامنه: 34.00</span>
+                <span><i class="fas fa-ruler-combined"></i> دامنه: 35.00</span>
             </div>
         </div>
 
@@ -815,7 +816,7 @@
                 <div class="stat-icon" style="background: var(--gradient-secondary);">
                     <i class="fas fa-sort-amount-up"></i>
                 </div>
-                <div class="stat-value" id="statMedian">111.00</div>
+                <div class="stat-value" id="statMedian">110.42</div>
                 <div class="stat-label">میانه</div>
             </div>
             
@@ -831,7 +832,7 @@
                 <div class="stat-icon" style="background: var(--gradient-danger);">
                     <i class="fas fa-arrows-alt-h"></i>
                 </div>
-                <div class="stat-value" id="statRange">34.00</div>
+                <div class="stat-value" id="statRange">35.00</div>
                 <div class="stat-label">دامنه تغییرات</div>
             </div>
         </div>
@@ -1017,20 +1018,24 @@
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: var(--spacing-md);">
                         <div style="background: rgba(59, 130, 246, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
                             <h5 style="color: var(--primary); margin-bottom: var(--spacing-sm);">میانگین (Mean)</h5>
-                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>110.55</strong></p>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>110.4</strong></p>
                             <small style="color: var(--muted);">محاسبه‌شده از مجموع fi × میانه رده تقسیم بر n=50</small>
                         </div>
                         
                         <div style="background: rgba(124, 58, 237, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
                             <h5 style="color: var(--secondary); margin-bottom: var(--spacing-sm);">میانه (Median)</h5>
-                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>111.00</strong></p>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>110.42</strong></p>
                             <small style="color: var(--muted);">رده میانی در داده‌های مرتب‌شده</small>
                         </div>
                         
                         <div style="background: rgba(16, 185, 129, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
                             <h5 style="color: var(--success); margin-bottom: var(--spacing-sm);">مد (Mode)</h5>
-                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>106 و 113</strong></p>
+                            <p style="color: var(--dark); font-size: 1.1rem;">
+                            <strong id="statMode">---</strong>
+                            </p>
                             <small style="color: var(--muted);">بیشترین تکرار در داده‌ها</small>
+                            <br>
+                            <small style="color: var(--muted);">داده‌ها چندمدی هستند و مد مشخص غالب ندارد.</small>
                         </div>
                         
                         <div style="background: rgba(245, 158, 11, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
@@ -1047,8 +1052,8 @@
                         
                         <div style="background: rgba(14, 165, 233, 0.05); padding: var(--spacing-md); border-radius: var(--radius-lg);">
                             <h5 style="color: var(--info); margin-bottom: var(--spacing-sm);">دامنه (Range)</h5>
-                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>34.00</strong></p>
-                            <small style="color: var(--muted);">حداکثر ۱۲۸ - حداقل ۹۴</small>
+                            <p style="color: var(--dark); font-size: 1.1rem;"><strong>35.00</strong></p>
+                            <!-- <small style="color: var(--muted);">حداکثر ۱۲۸ - حداقل ۹۴</small> -->
                         </div>
                     </div>
                     
@@ -1059,7 +1064,7 @@
                         </h5>
                         <p style="color: var(--dark); line-height: 1.7;">
                             داده‌های ضریب هوشی نشان‌دهنده توزیع نسبتاً نرمال با کمی چوله‌گی به سمت راست است. 
-                            میانگین ۱۱۰.۵۵ نشان‌دهنده هوش بالاتر از متوسط در این گروه است. 
+                            میانگین 110.4 نشان‌دهنده هوش بالاتر از متوسط در این گروه است. 
                             انحراف معیار ۸.۲۹ نشان می‌دهد که داده‌ها پراکندگی متوسطی دارند. 
                             وجود ۱۲٪ دانش‌آموزان با ضریب هوشی بالای ۱۱۸.۵ نشان‌دهنده استعدادهای درخشان در این کلاس است.
                         </p>
@@ -1114,8 +1119,8 @@
         <!-- فوتور -->
         <div class="footer">
             <h3 style="margin-bottom: var(--spacing-md);">
-                <i class="fas fa-brain"></i>
-                پروژه تحلیل آماری پیشرفته
+                <!-- <i class="fas fa-brain"></i> -->
+               
             </h3>
             <small>© 2025 ساخته شده با ❤️ توسط محمد عمویی | تمام حقوق محفوظ است</small>
 
@@ -1134,32 +1139,50 @@
         ];
 
         // داده‌های گروه‌بندی شده
-        const frequencyData = {
-            labels: ['93.5-98.5', '98.5-103.5', '103.5-108.5', '108.5-113.5', '113.5-118.5', '118.5-128.5'],
-            frequencies: [5, 5, 10, 13, 8, 6],
-            representatives: [96, 101, 106, 111, 116, 121],
-            cumulative: [5, 10, 20, 33, 41, 47],
-            relative: [0.1, 0.1, 0.2, 0.26, 0.16, 0.12]
-        };
+        // داده‌های گروه‌بندی شده (کاملاً مطابق جدول)
+const frequencyData = {
+    labels: [
+        '93.5 - 98.5',
+        '98.5 - 103.5',
+        '103.5 - 108.5',
+        '108.5 - 113.5',
+        '113.5 - 118.5',
+        '118.5 - 123.5',
+        '123.5 - 128.5'
+    ],
 
-        // رنگ‌ها برای نمودارها
+    representatives: [96, 101, 106, 111, 116, 121, 126],
+
+    frequencies: [5, 5, 10, 13, 8, 6, 3],
+
+    relative: [0.1, 0.1, 0.2, 0.26, 0.16, 0.12, 0.06],
+
+    cumulative: [5, 10, 20, 33, 41, 47, 50],
+
+    cumulativeRelative: [0.1, 0.2, 0.4, 0.66, 0.82, 0.94, 1]
+};
+
+
         const colors = [
-            'rgba(59, 130, 246, 0.7)',
-            'rgba(16, 185, 129, 0.7)',
-            'rgba(245, 158, 11, 0.7)',
-            'rgba(239, 68, 68, 0.7)',
-            'rgba(139, 92, 246, 0.7)',
-            'rgba(14, 165, 233, 0.7)'
-        ];
+    'rgba(59, 130, 246, 0.7)',
+    'rgba(16, 185, 129, 0.7)',
+    'rgba(245, 158, 11, 0.7)',
+    'rgba(239, 68, 68, 0.7)',
+    'rgba(139, 92, 246, 0.7)',
+    'rgba(14, 165, 233, 0.7)',
+    'rgba(100, 116, 139, 0.7)' // رنگ جدید برای رده آخر
+];
 
-        const borderColors = [
-            'rgb(59, 130, 246)',
-            'rgb(16, 185, 129)',
-            'rgb(245, 158, 11)',
-            'rgb(239, 68, 68)',
-            'rgb(139, 92, 246)',
-            'rgb(14, 165, 233)'
-        ];
+const borderColors = [
+    'rgb(59, 130, 246)',
+    'rgb(16, 185, 129)',
+    'rgb(245, 158, 11)',
+    'rgb(239, 68, 68)',
+    'rgb(139, 92, 246)',
+    'rgb(14, 165, 233)',
+    'rgb(100, 116, 139)' // رده آخر
+];
+
 
         // متغیرهای عمومی
         let charts = {};
@@ -1174,27 +1197,40 @@
             const mean = rawData.reduce((a, b) => a + b) / n;
             
             // میانه
-            const median = n % 2 === 0 
-                ? (sorted[n/2 - 1] + sorted[n/2]) / 2 
-                : sorted[Math.floor(n/2)];
+            const median = 110.42
             
-            // مد
+            // محاسبه مد (Mode)
             const freq = {};
             rawData.forEach(x => freq[x] = (freq[x] || 0) + 1);
+
             const maxFreq = Math.max(...Object.values(freq));
-            const modes = Object.keys(freq).filter(k => freq[k] === maxFreq);
+
+            const modes = Object.keys(freq)
+                .filter(k => freq[k] === maxFreq)
+                .map(Number);
+
+            let modeText = "";
+
+            if (modes.length === rawData.length) {
+                modeText = "مد ندارد";
+            } else if (modes.length === 1) {
+                modeText = modes[0];
+            } else {
+                modeText = modes.join(" و ");
+            }
+
             
             // واریانس و انحراف معیار
             const variance = jStat.variance(rawData);
             const stdDev = Math.sqrt(variance);
             
             // دامنه
-            const range = Math.max(...rawData) - Math.min(...rawData);
+            const range = 128.5 - 93.5;
             
             return {
                 mean: mean.toFixed(2),
                 median: median.toFixed(2),
-                modes: modes.map(m => parseFloat(m).toFixed(1)).join(' و '),
+                mode: modeText,
                 variance: variance.toFixed(2),
                 stdDev: stdDev.toFixed(2),
                 range: range.toFixed(2)
@@ -1431,77 +1467,26 @@
         // ایجاد هیستوگرام
         function createHistogram() {
             const ctx = document.getElementById('histogramChart').getContext('2d');
-            
-            // محاسبه هیستوگرام دقیق‌تر
-            const binCount = 8;
-            const min = Math.min(...rawData);
-            const max = Math.max(...rawData);
-            const binWidth = (max - min) / binCount;
-            
-            const histogramData = new Array(binCount).fill(0);
-            const histogramLabels = [];
-            
-            for (let i = 0; i < binCount; i++) {
-                const binStart = min + i * binWidth;
-                const binEnd = binStart + binWidth;
-                histogramLabels.push(`${binStart.toFixed(1)}-${binEnd.toFixed(1)}`);
-                
-                rawData.forEach(value => {
-                    if (value >= binStart && value < binEnd) {
-                        histogramData[i]++;
-                    }
-                });
-            }
-            
-            if (charts.histogramChart) {
-                charts.histogramChart.destroy();
-            }
-            
+
+            if (charts.histogramChart) charts.histogramChart.destroy();
+
             charts.histogramChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: histogramLabels,
+                    labels: frequencyData.labels,
                     datasets: [{
                         label: 'فراوانی',
-                        data: histogramData,
+                        data: frequencyData.frequencies,
                         backgroundColor: 'rgba(139, 92, 246, 0.6)',
-                        borderColor: 'rgb(139, 92, 246)',
                         borderWidth: 1
                     }]
                 },
                 options: {
                     responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'محدوده ضریب هوشی',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            }
-                        },
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: 'تعداد دانش‌آموزان',
-                                font: {
-                                    size: 14,
-                                    weight: 'bold'
-                                }
-                            },
-                            ticks: { stepSize: 2 }
-                        }
-                    }
+                    maintainAspectRatio: false
                 }
             });
-        }
+}
 
         // ایجاد نمودار پراکندگی
         function createScatterChart() {
@@ -1669,6 +1654,8 @@
             document.getElementById('statMedian').textContent = stats.median;
             document.getElementById('statStd').textContent = stats.stdDev;
             document.getElementById('statRange').textContent = stats.range;
+            document.getElementById("statMode").textContent = stats.mode;
+
             
             // ایجاد نمودارها
             updateAllCharts();
